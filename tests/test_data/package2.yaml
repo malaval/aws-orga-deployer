@@ -1,0 +1,41 @@
+# Package definition file used in `test_execution.py`
+PackageConfiguration:
+  S3Bucket: fake-bucket
+  S3Region: eu-west-1
+  OverrideAccountNameByTag: Name
+  
+DefaultModuleConfiguration:
+  All:
+    AssumeRole: null
+    EndpointUrls:
+      cloudformation: http://localhost:5000
+      iam: http://localhost:5000
+      s3: http://localhost:5000
+      sts: http://localhost:5000
+      ssm: http://localhost:5000
+
+Modules:
+  python1:
+    Variables:
+      varPython1: "valuePython1"
+    Deployments:
+      - Include:
+          AccountIds: ["123456789012"]
+          Regions: ["eu-west-1"]
+  cloudformation1:
+    Configuration:
+      StackName: test
+      TemplateFilename: template.yaml
+    Variables:
+      varCloudFormation1: "valueCloudFormation1"
+    Deployments:
+      - Include:
+          AccountIds: ["123456789012"]
+          Regions: ["eu-west-1"]
+  terraform1:
+    Variables:
+      varTerraform1: "valueTerraform1"
+    Deployments:
+      - Include:
+          AccountIds: ["123456789012"]
+          Regions: ["eu-west-1"]

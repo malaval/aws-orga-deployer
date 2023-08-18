@@ -1,0 +1,50 @@
+# Package definition file used in `test_package.py`, `test_modules.py` and
+# `test_orga.py`
+PackageConfiguration:
+  S3Bucket: fake-bucket
+  S3Region: eu-west-1
+  OverrideAccountNameByTag: Name
+  
+DefaultModuleConfiguration:
+  All:
+    AssumeRole: "arn:aws:iam::${CURRENT_ACCOUNT_ID}:role/Admin"
+  python:
+    Retry:
+      MaxAttempts: 1
+      DelayBeforeRetrying: 0
+
+DefaultVariables:
+  All:
+    varGlobal: "global"
+
+Modules:
+  python1:
+    Configuration:
+      AssumeRole: null
+      Retry:
+        MaxAttempts: 2
+        DelayBeforeRetrying: 1
+    Variables:
+      varPython1: "value1"
+    Deployments:
+      - Include:
+          Regions: ["us-east-1"]
+  terraform1:
+    Variables:
+      var1: "value1"
+      varGlobal: "terraform1"
+    Deployments:
+      - Exclude:
+          AccountIds: ["123456789012"]
+        VariablesFromOutputs:
+          varTerraform1:
+            Module: python1
+            AccountId: "${CURRENT_ACCOUNT_ID}"
+            Region: "us-east-1"
+            OutputName: outputPython1
+        # This dependency is meaningless given `VariablesFromOutputs` but
+        # it is here for testing
+        Dependencies:
+          - Module: python1
+            AccountId: "${CURRENT_ACCOUNT_ID}"
+            Region: "us-east-1"

@@ -1,0 +1,15 @@
+title: "AWS Orga Deployer"
+remote_theme: just-the-docs/just-the-docs
+# theme: just-the-docs
+search_enabled: true
+
+aux_links:
+  AWS Orga Deployer on GitHub: https://github.com/malaval/aws-orga-deployer
+  
+callouts:
+  note:
+    title: Note
+    color: blue
+  warning:
+    title: Warning
+    color: red

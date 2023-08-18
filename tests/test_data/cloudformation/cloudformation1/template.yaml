@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  varCloudFormation1:
+    Type: String
+Resources:
+  SSMParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: test
+      Type: String
+      Value: !Ref varCloudFormation1
+      Description: Test parameter
+Outputs:
+  SSMParameterID:
+    Value: test

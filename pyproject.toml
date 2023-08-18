@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+target-version = ["py37"]
+line-length = 88
+include = "\\.py$"
+
+[tool.pylint.messages_control]
+max-line-length = 88
+disable = [
+    "useless-option-value",
+    "bad-continuation"
+]
+
+[tool.isort]
+profile = "black"

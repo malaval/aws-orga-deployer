@@ -1,0 +1,6 @@
+# This package is invalid because it doesn't comply with the schema
+PackageConfiguration:
+  S3Bucket: fake-bucket
+  # S3Region is missing
+
+Modules: []
