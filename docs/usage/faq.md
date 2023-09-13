@@ -13,4 +13,26 @@ There is no command like `terraform destroy` in AWS Orga Deployer. To destroy a 
 
 ## What if I need to close an AWS account?
 
-If you have deployed modules in an account that you need to close, you should use AWS Orga Deployer to destroy the module deployments before closing the account. If the account is closed before destroying exising deployments, AWS Orga Deployer considers that these deployments must be destroyed but these changes are skipped. In that case, you should edit manually the package state (see [Package state](../package/state.html)).
+If you have deployed modules in an account that you need to close, you should use AWS Orga Deployer to destroy the module deployments before closing the account. If the account is closed before destroying exising deployments, AWS Orga Deployer considers that these deployments must be destroyed but these changes are skipped. Note that AWS Orga Deployer will wrongly indicate that the changes are skipped because of CLI arguments, but this is because the included scope by default is all ative accounts. In that case, you should edit manually the package state to remove the corresponding deployments (see [Package state](../package/state.html)).
+
+## How to migrate existing deployments to AWS Orga Deployer?
+
+If you have already created resources using Terraform, CloudFormation or Python scripts outside of AWS Orga Deployer, here is a high-level procedure to migrate to AWS Orga Deployer:
+
+1. Create a package and the necessary modules.
+2. Write the package definition file such that the deployments to create match the existing deployments.
+3. For:
+    * Terraform: Upload the Terraform state of all existing deployments to `s3://<S3Bucket>/<S3Prefix>/terraform/<ModuleName>/<AccountId>/<Region>/terraform.tfstate`
+    * CloudFormation: Make sure that the CloudFormation stack already exist.
+    * Python: Make sure that the Python scripts have already been executed.
+4. Download the package state `state.json` from the S3 bucket.
+5. Execute `aws-orga-deployer list`. It should indicate that there are as many deployments to create as there are existing deployments.
+6. Open the file `output.json` and for each item in the list at `root["PendingChanges"]["Create"]`:
+    1. Copy the item into the list at `root["Deployments"]` of the package state (see [Package state](../package/state.html) for the expected structure).
+    2. Remove the attribute `AccountName` in `item["Deployment"]`.
+    3. Remove the attribute `item["ModuleConfiguration"]`.
+    4. Rename the attribute `item["TargetState"]` by `item["CurrentState"]`.
+    5. Add a string attribute `LastChangedTime` in `item["CurrentState"]`.
+    6. Add a dict attribute `Outputs` in `item["CurrentState"]`. It must be either an empty dict, or populated with the output values of the deployments.
+7. Upload the modified version of the package state `state.json`.
+8. Re-execute `aws-orga-deployer list` to check that there are no pending deployments to create.

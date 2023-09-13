@@ -11,7 +11,7 @@ A CloudFormation module consists of a CloudFormation template. The deployment of
 
 ## How to develop a CloudFormation module?
 
-* You need at least one file YAML or JSON template file in the module directory (`<packageRootDir>/python/<moduleName>`).
+* You need at least one file YAML or JSON template file in the module directory (`<packageRootDir>/cloudformation/<moduleName>`).
 * You need to specify the name of the file and the name of stack in the module configuration. See [Package definition file](../package/file.html#attributes-specific-to-cloudformation-modules)
 * The module deployment variables are passed as input parameters to the stack. These input parameters must exist in the template.
 * The module deployment outputs are automatically populated from the stack outputs.

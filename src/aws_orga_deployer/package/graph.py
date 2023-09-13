@@ -159,6 +159,7 @@ class DeploymentGraph:
         from_key: ModuleAccountRegionKey,
         to_key: ModuleAccountRegionKey,
         is_var: bool,
+        ignore_if_not_exists: bool = False,
     ) -> None:
         """Add a new edge in the graph, which corresponds to a dependency
         between steps.
@@ -167,15 +168,18 @@ class DeploymentGraph:
             from_key: Dependency of the module deployment.
             to_key: Module deployment
             is_var (str): True if the dependency is of type `VariablesFromOutputs`.
+            ignore_if_not_exists: Ignore if the dependent deployment does not
+                exist if set to True. Otherwise, raise an exception.
 
         Raises:
             GraphError: If the dependency does not exist in the graph, unless
                 the action is `delete` because we don't need to wait for the
-                dependency to be deleted if it doesn't exist.
+                dependency to be deleted if it doesn't exist, or if
+                `ignore_if_not_exists` is True.
         """
         to_details = self._graph.nodes[to_key]["details"]
         if not from_key in self._graph.nodes:
-            if to_details.action == "destroy":
+            if to_details.action == "destroy" or ignore_if_not_exists is True:
                 return
             raise GraphError(f"{to_key} depends on {from_key} which does not exist")
         self._graph.add_edge(from_key, to_key, is_var=is_var)

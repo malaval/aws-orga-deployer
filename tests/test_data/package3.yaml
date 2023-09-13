@@ -1,0 +1,35 @@
+# Package definition file used in `test_package.py` to test dependency handling
+# with the `IgnoreIfNotExists` attribute
+PackageConfiguration:
+  S3Bucket: fake-bucket
+  S3Region: eu-west-1
+  OverrideAccountNameByTag: Name
+
+Modules:
+  python1:
+    Deployments:
+      - Include:
+          AccountIds: ["123456789012"]
+          Regions: ["eu-west-1"]
+  terraform1:
+    Variables:
+      var1: "value1"
+    Deployments:
+      - Include:
+          AccountIds: ["123456789012"]
+          Regions:
+            - "us-east-1"
+        Dependencies:
+          - Module: python1
+            AccountId: "${CURRENT_ACCOUNT_ID}"
+            Region: "${CURRENT_REGION}"
+      - Include:
+          AccountIds: ["123456789012"]
+          Regions:
+            - "us-east-2"
+        VariablesFromOutputs:
+          var1:
+            Module: python1
+            AccountId: "${CURRENT_ACCOUNT_ID}"
+            Region: "${CURRENT_REGION}"
+            OutputName: varPython1

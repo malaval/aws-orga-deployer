@@ -28,7 +28,7 @@ Here are the error messages that you may obtain because of dependencies:
 
 ### `[ToModule,ToAccountId,ToRegion] depends on [FromModule,FromAccountId,FromRegion] which does not exist`
 
-The deployment of the module `ToModule` in the account `ToAccountId` and region `ToRegion` is dependent on the deployment of `FromModule` in the account `FromAccountId` and region `FromRegion`. However, the latter deployment does not exist in the package definition file.
+The deployment of the module `ToModule` in the account `ToAccountId` and region `ToRegion` is dependent on the deployment of `FromModule` in the account `FromAccountId` and region `FromRegion`. However, the latter deployment does not exist in the package definition file. You can ignore this type of error by using the attribute `IgnoreIfNotExists` in the package definition file.
 
 ### `The package contains circular dependencies`
 

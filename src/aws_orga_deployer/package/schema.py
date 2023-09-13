@@ -225,6 +225,9 @@ def validate(content: Dict) -> None:
                                                         "OutputName": {
                                                             "type": "string"
                                                         },
+                                                        "IgnoreIfNotExists": {
+                                                            "type": "boolean"
+                                                        },
                                                     },
                                                     "required": [
                                                         "Module",
@@ -246,6 +249,9 @@ def validate(content: Dict) -> None:
                                                     },
                                                     "Region": {"type": "string"},
                                                     "AccountId": {"type": "string"},
+                                                    "IgnoreIfNotExists": {
+                                                        "type": "boolean"
+                                                    },
                                                 },
                                                 "required": [
                                                     "Module",

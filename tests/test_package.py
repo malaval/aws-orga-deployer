@@ -544,6 +544,70 @@ class TestPackage(unittest.TestCase):
             self.assertGreaterEqual(len(export["Failed"]["Create"]), 1)
             package1.save(stop_autosave=True)
 
+    def test_missing_dependencies_not_ignored_1(self):
+        """Test the behavior with dependencies that don't exist with the attribute
+        `IgnoreIfNotExists` not set.
+        """
+        # Use the package file "package3.yaml" for this test
+        with patch(
+            "aws_orga_deployer.config.CLI",
+            update_cli_filters({"package_file": mock.get_test_path("package3.yaml")}),
+        ):
+            package = Package()
+            with self.assertRaises(graph.GraphError):
+                package.full_init(self.orga)
+            package.save(stop_autosave=True)
+
+    def test_missing_dependencies_not_ignored_2(self):
+        """Test the behavior with dependencies that don't exist with the attribute
+        `IgnoreIfNotExists` not set for all dependencies.
+        """
+        # Use the package file "package3.yaml" for this test
+        with patch(
+            "aws_orga_deployer.config.CLI",
+            update_cli_filters({"package_file": mock.get_test_path("package3.yaml")}),
+        ):
+            package = Package()
+            # Modify the package content to set "IgnoreIfNotExists" for the
+            # first deployment block only
+            deployments = package.package["Modules"]["terraform1"]["Deployments"]
+            deployments[0]["Dependencies"][0]["IgnoreIfNotExists"] = True
+            with self.assertRaises(graph.GraphError):
+                package.full_init(self.orga)
+            package.save(stop_autosave=True)
+
+    def test_missing_dependencies_ignored(self):
+        """Test the behavior with dependencies that don't exist with the attribute
+        `IgnoreIfNotExists` set to True for all dependencies.
+        """
+        # Use the package file "package3.yaml" for this test
+        with patch(
+            "aws_orga_deployer.config.CLI",
+            update_cli_filters({"package_file": mock.get_test_path("package3.yaml")}),
+        ):
+            package = Package()
+            # Modify the package content to set "IgnoreIfNotExists" for both
+            # deployment blocks
+            deployments = package.package["Modules"]["terraform1"]["Deployments"]
+            deployments[0]["Dependencies"][0]["IgnoreIfNotExists"] = True
+            deployments[1]["VariablesFromOutputs"]["var1"]["IgnoreIfNotExists"] = True
+            package.full_init(self.orga)
+            # Mark all steps as completed
+            try:
+                while True:
+                    key, _, _, _ = package.next()
+                    package.complete(key, made_changes=True, result="Summary")
+            except graph.NoMorePendingStep:
+                pass
+            # Check that the value of the "var1" for the module "terraform1"
+            # is still equal to "value1" as the "VariablesFromOutputs"
+            # dependency does not exist
+            key = store.ModuleAccountRegionKey(
+                "terraform1", "123456789012", "us-east-2"
+            )
+            self.assertEqual(package.current[key].variables["var1"], "value1")
+            package.save(stop_autosave=True)
+
 
 class TestInvalidPackage(unittest.TestCase):
     """Test the class Package with invalid package definition files."""

@@ -45,4 +45,4 @@ Package persistent data include:
 
 * [Package state](state.html) in `state.json`: Contains the list of module deployed and their configuration at the time they were deployed. This is used to evaluate the list of deployments to create, update or destroy.
 * Cached information about AWS accounts and organizational units in `orga.json`: Accelerate the execution of AWS Orga Deployer by removing the need to query AWS Organizations at each run.
-* Terraform states for Terraform modules in `terraform/<moduleName>/<AccountId>/<region>/terraform.state`.
+* Terraform states for Terraform modules in `terraform/<ModuleName>/<AccountId>/<Region>/terraform.tfstate`.

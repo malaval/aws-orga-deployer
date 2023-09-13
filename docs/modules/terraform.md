@@ -7,11 +7,11 @@ nav_order: 1
 
 # Terraform
 
-A CloudFormation module consists of Terraform templates. The deployment of a Terraform module consists of creating, updating or deleting resources by applying the template.
+A Terraform module consists of Terraform templates. The deployment of a Terraform module consists of creating, updating or deleting resources by applying the template.
 
 ## How to develop a Terraform module?
 
-* You need at least one TF file in the module directory (`<packageRootDir>/python/<moduleName>`).
+* You need at least one TF file in the module directory (`<packageRootDir>/terraform/<moduleName>`).
 * The module deployment variables are passed as Terraform variables.
     * The name of the variables must be the same than the variable key in the package definition file.
     * These variables must be declared in one of the TF files. You can use a dedicated file `variables.tf` for this.
@@ -19,6 +19,20 @@ A CloudFormation module consists of Terraform templates. The deployment of a Ter
 
 {: .warning }
 > The AWS provider and the state backend must **not** be declared in these files.
+>
+> The state backend is automatically configured by AWS Orga Deployer to store the Terraform state in the S3 bucket at `terraform/<ModuleName>/<AccountId>/<Region>/terraform.tfstate`. You must not change the state backend configuration.
+>
+> The AWS provider is automatically declared by AWS Orga Deployer. However, if you want to change certain attributes (e.g. fix the provider version or define default tags), you can create a file `override.tf` in the module directory that contains the attributes to override. Example:
+>
+> ```hcl
+> provider "aws" {
+>   version = "4.5.0"
+>   default_tags {
+>     tags = {
+>       TagKey = "TagValue"
+>     }
+>   }
+> }
 
 ### Example
 

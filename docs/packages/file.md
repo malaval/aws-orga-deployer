@@ -81,6 +81,7 @@ Modules:
           - Module: string
             AccountId: string
             Region: string
+            IgnoreIfNotExists: boolean
         Variables:
           <VarKey>: <VarValue>
         VariablesFromOutputs:
@@ -89,6 +90,7 @@ Modules:
             AccountId: string
             Region: string
             OutputName: output
+            IgnoreIfNotExists: boolean
 ```
 
 * `PackageConfiguration` **[REQUIRED]**:
@@ -111,6 +113,7 @@ Modules:
         * `AccountId` **[REQUIRED]**: AWS account ID for the dependent deployment.
         * `Region` **[REQUIRED]**: Region for the dependent deployment.
         * `OutputName` **[REQUIRED]**: Name of the output in the dependent deployment.
+        * `IgnoreIfNotExists`: Set to `True` to ignore the dependency if the referenced deployment does not exist. By default, the value is `False` and AWS Orga Deployer raises an error if the dependency does not exist (see [Dependencies](../usage/dependencies.html)).
     * `Deployments` **[REQUIRED]**: List of deployment blocks for this module. Each deployment block specifies a scope of AWS accounts and regions where the module must be deployed with a specific configuration:
       * `Include`: AWS accounts and regions included in the scope of deployments. If `Include` is not specified, the module is deployed in all enabled regions of all AWS accounts in the organization, except the scope eventually specified by `Exclude`.
         * `AccountIds`: List of AWS accounts IDs to include.
@@ -131,6 +134,7 @@ Modules:
         * `Module` **[REQUIRED]**: Name of the module for the dependent deployment.
         * `AccountId` **[REQUIRED]**: AWS account ID for the dependent deployment.
         * `Region` **[REQUIRED]**: Region for the dependent deployment.
+        * `IgnoreIfNotExists`: Set to `True` to ignore the dependency if the referenced deployment does not exist. By default, the value is `False` and AWS Orga Deployer raises an error if the dependency does not exist (see [Dependencies](../usage/dependencies.html)).
       * `VariablesFromOutputs`: Same as above but apply to the deployment block only.
 
 {: .note-title }

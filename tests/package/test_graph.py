@@ -20,6 +20,16 @@ class TestDeploymentGraph(unittest.TestCase):
         with self.assertRaises(graph.GraphError):
             dep.add_dependency(step2, step1, is_var=False)
 
+    def test_ignored_missing_dependency(self):
+        """Check that a GraphError exception is not raised if a dependency does
+        not exist when the argument `ignore_if_not_exists` is True.
+        """
+        dep = graph.DeploymentGraph()
+        step1 = store.ModuleAccountRegionKey("m1", "a1", "r1")
+        step2 = store.ModuleAccountRegionKey("m2", "a1", "r1")
+        dep.add_step(step1, action="create", skip=False)
+        dep.add_dependency(step2, step1, is_var=False, ignore_if_not_exists=True)
+
     def test_loop(self):
         """Check that a GraphError exception is raised if the package contains
         circular dependencies.

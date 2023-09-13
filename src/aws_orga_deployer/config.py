@@ -18,7 +18,7 @@ DEFAULT_PACKAGE_FILE: str = "package.yaml"
 DEFAULT_OUTFILE_FILE: str = "output.json"
 
 # Default location of the temporary directory that contains cache and logs
-DEFAULT_TEMP_DIR: str = ".aws_orga_deployer"
+DEFAULT_TEMP_DIR: str = ".aws-orga-deployer"
 
 # Number of concurrent threads used to query AWS Organizations
 CONCURRENT_ORGA_THREADS: int = 10

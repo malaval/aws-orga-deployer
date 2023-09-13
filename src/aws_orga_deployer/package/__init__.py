@@ -267,8 +267,9 @@ class Package:
             # If the source module deployment exists and has outputs, retrieve
             # the value of the output and modify the value of the variables
             if not c_content is None:
-                output_value = c_content.outputs.get(var_from["OutputName"])
-                t_content.variables[var_name] = output_value
+                if var_from["OutputName"] in c_content.outputs:
+                    output_value = c_content.outputs.get(var_from["OutputName"])
+                    t_content.variables[var_name] = output_value
 
     def _init_cli_filters(self) -> None:
         """Identify the filters defined by the CLI arguments `--include`
@@ -424,14 +425,26 @@ class Package:
                     dependency["AccountId"],
                     dependency["Region"],
                 )
-                self.graph.add_dependency(from_key, to_key, is_var=False)
+                ignore_if_not_exists = bool(dependency.get("IgnoreIfNotExists", False))
+                self.graph.add_dependency(
+                    from_key,
+                    to_key,
+                    is_var=False,
+                    ignore_if_not_exists=ignore_if_not_exists,
+                )
             for dependency in to_details.var_from_outputs.values():
                 from_key = ModuleAccountRegionKey(
                     dependency["Module"],
                     dependency["AccountId"],
                     dependency["Region"],
                 )
-                self.graph.add_dependency(from_key, to_key, is_var=True)
+                ignore_if_not_exists = bool(dependency.get("IgnoreIfNotExists", False))
+                self.graph.add_dependency(
+                    from_key,
+                    to_key,
+                    is_var=True,
+                    ignore_if_not_exists=ignore_if_not_exists,
+                )
 
     def _is_skipped_by_cli_filters(self, key: ModuleAccountRegionKey) -> bool:
         """Check if a given module deployment should be skipped due to the CLI
