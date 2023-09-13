@@ -33,6 +33,7 @@ A Terraform module consists of Terraform templates. The deployment of a Terrafor
 >     }
 >   }
 > }
+> ```
 
 ### Example
 

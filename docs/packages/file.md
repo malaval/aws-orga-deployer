@@ -50,6 +50,13 @@ Modules:
       <ConfigKey>: <ConfigValue>
     Variables:
       <VarKey>: <VarValue>
+    VariablesFromOutputs:
+      <VarKey>:
+        Module: string
+        AccountId: string
+        Region: string
+        OutputName: output
+        IgnoreIfNotExists: boolean
     Deployments:
       - Include:
           AccountIds:
