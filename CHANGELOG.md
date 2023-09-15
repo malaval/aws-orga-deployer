@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.1] 2023/09/15
+## [0.1.2] 2023/09/15
 
 * Add support of the CLI argument `--disable-periodic-state-saving` for the command `apply`. By default, AWS Orga Deployer saves the package state every 10 seconds during the execution of the command `apply`. This enables to recover from an eventual crash of AWS Orga Deployer without losing the information that certain deployments may have completed. However, this can lead to a large number of object versions in S3.
 * Fixed a bug that prevented to gracefully exit the execution of Terraform modules, because the propagation of SIGINT signals did not work as expected.
