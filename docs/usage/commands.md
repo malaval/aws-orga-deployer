@@ -234,6 +234,7 @@ Apply pending module deployments. This command is equivalent to `terraform apply
 * `--force-update`: By default, modules are redeployed to a given AWS account and region only when the [module hash](../modules/hash.html) or the variables changes. Add this argument to force module redeployment. Warning: this may result in a large number of deployments.
 * `--non-interactive`: Do not ask to review and confirm the deployment scope by entering `yes`.
 * `--keep-deployment-cache`: Keep temporary files created during module deployment to enable troubleshooting. See [Logging](logging.html). By default, these temporary files are deleted.
+* `--disable-periodic-state-saving`: Disable automatic saving of package state in S3 every 10 seconds to reduce the number of object versions. This automatic saving enables to recover from an eventual crash of AWS Orga Deployer without losing the information that certain deployments may have completed since the beginning of the execution. However, if the execution of the `apply` command takes a lot of time, this can lead to a large number of object versions in S3. In any case, the package state is saved at the end of the execution.
 * *Scope filters*: See [Deployment scope filters](#deployment-scope-filters)
 
 ### Format of the output file

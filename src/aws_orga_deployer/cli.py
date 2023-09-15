@@ -258,10 +258,18 @@ def _parse_cli_args() -> None:
     )
 
     # Apply command
-    subparsers.add_parser(
+    apply_parser = subparsers.add_parser(
         "apply",
         help="Apply pending deployments",
         parents=[parent_list_preview_apply, parent_preview_apply],
+    )
+    apply_parser.add_argument(
+        "--disable-periodic-state-saving",
+        action="store_true",
+        help=(
+            "Disable automatic saving of package state in S3 every 10 seconds to reduce"
+            " the number of object versions"
+        ),
     )
 
     # Update-hash command

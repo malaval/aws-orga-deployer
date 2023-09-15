@@ -37,3 +37,6 @@ build:
 
 upload:
 	python -m twine upload dist/*
+
+install:
+	pip3 install -e .

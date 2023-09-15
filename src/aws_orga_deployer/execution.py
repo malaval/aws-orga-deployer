@@ -213,7 +213,7 @@ class Executor:
                     section_that_failed = "prepare"
                     raise
                 # Execute subprocesses
-                for id_command, command in enumerate(commands):
+                for command in commands:
                     env = os.environ.copy()
                     env.update(command.env)
                     # Assume an IAM role if needed and add AWS temporary
@@ -222,7 +222,7 @@ class Executor:
                     if command.assume_role and not iam_role is None:
                         self._add_aws_temp_credentials(env, iam_role)
                     # Execute the subprocess
-                    LOGGER.debug("%s Executing subprocess %s", key, id_command)
+                    LOGGER.debug("%s Executing subprocess '%s'", key, command.name)
                     LOGGER.debug("%s Command: %s", key, " ".join(command.args))
                     LOGGER.debug("%s Cwd: %s", key, command.cwd)
                     try:
@@ -232,14 +232,15 @@ class Executor:
                             command.args,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
+                            stdin=subprocess.PIPE,
                             env=env,
                             cwd=command.cwd,
                             shell=False,
-                            preexec_fn=preexec,
+                            start_new_session=True,
                         )
+                        sent_sigint = False
+                        sent_sigterm = False
                         while True:
-                            sent_sigint = False
-                            sent_sigterm = False
                             # Check every second if a signal SIGINT or SIGTERM must
                             # be sent to be the subprocess. Wait for the subprocess
                             # to exit after sending the signal
@@ -248,14 +249,14 @@ class Executor:
                                 # Write the subprocess logs
                                 self._write_subprocess_logs(
                                     key,
-                                    id_command,
+                                    command.name,
                                     nb_attempts,
                                     "stdout.log",
                                     stdout.decode(),
                                 )
                                 self._write_subprocess_logs(
                                     key,
-                                    id_command,
+                                    command.name,
                                     nb_attempts,
                                     "stderr.log",
                                     stderr.decode(),
@@ -266,12 +267,12 @@ class Executor:
                                         stream.write(stdout)
                                 # The subprocess must return an exit code of 0
                                 if process.returncode != 0:
-                                    section_that_failed = f"subprocess {id_command}"
+                                    section_that_failed = f"subprocess '{command.name}'"
                                     raise SubprocessError("Exit code is not 0")
                                 # Interrupt the step if SIGINT or SIGTERM was
                                 # pressed
                                 if sent_sigint or sent_sigterm:
-                                    section_that_failed = f"subprocess {id_command}"
+                                    section_that_failed = f"subprocess '{command.name}'"
                                     raise SubprocessError("Subprocess interrupted")
                                 # Exit the loop if the subprocess has completed
                                 break
@@ -283,7 +284,7 @@ class Executor:
                                     process.send_signal(signal.SIGTERM)
                                     sent_sigterm = True
                     except:
-                        section_that_failed = f"subprocess {id_command}"
+                        section_that_failed = f"subprocess '{command.name}'"
                         raise
                 # Execute the post-process function to parse outputs from the
                 # subprocesses
@@ -363,7 +364,7 @@ class Executor:
     def _write_subprocess_logs(
         self,
         key: ModuleAccountRegionKey,
-        id_command: int,
+        name_command: str,
         nb_attempts: int,
         filename: str,
         content: str,
@@ -373,7 +374,7 @@ class Executor:
         Args:
             root_logs_dir: Root path of the folder that stores logs for this run
             key: Step key
-            id_command: Identifier of the subprocess
+            name_command: Name of the subprocess
             nb_attempts: Current attempt number
             filename: Name of the file to which logs must be appended
             content: Logs to append
@@ -389,7 +390,7 @@ class Executor:
         log_file = os.path.join(log_path, filename)
         with open(log_file, "a", encoding="utf-8") as stream:
             stream.write("################################\n")
-            stream.write(f"# Subprocess #{id_command} - Attempt #{nb_attempts}\n")
+            stream.write(f"# Subprocess '{name_command}'' - Attempt #{nb_attempts}\n")
             stream.write("################################\n")
             stream.write(content)
             stream.write("\n")
@@ -428,11 +429,3 @@ class Executor:
     def _stop_catching_sigint(sig, frame) -> None:
         """Stop catching SIGINT."""
         raise KeyboardInterrupt
-
-
-def preexec() -> None:
-    """Function used to prevent the main thread from forwarding signals to
-    subprocesses in order to let current steps complete when users press
-    CTRL+C.
-    """
-    os.setpgrp()

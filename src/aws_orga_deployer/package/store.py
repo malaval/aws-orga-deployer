@@ -222,8 +222,10 @@ class CurrentStateStore(UserDict):
         self._data_copy: Dict = {}
         self.save()
         # Initialize a thread that saves the state every `period` seconds if it
-        # has changed since the last time it was saved to S3
-        Thread(target=func, daemon=True, name="CurrentStateStore").start()
+        # has changed since the last time it was saved to S3, unless disabled
+        # by CLI arguments
+        if config.CLI.get("disable_periodic_state_saving", False) is False:
+            Thread(target=func, daemon=True, name="CurrentStateStore").start()
 
     def save(self) -> bool:
         """Save the content to S3 if it has changed since the last time it was
