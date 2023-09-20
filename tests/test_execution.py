@@ -82,7 +82,6 @@ class TestExecutor(unittest.TestCase):
                 export["Completed"]["Create"][0]["DetailedResults"]["AccountId"],
                 "123456789012",
             )
-            package.save(stop_autosave=True)
 
     @mock_cloudformation
     @mock_ssm
@@ -104,7 +103,6 @@ class TestExecutor(unittest.TestCase):
             executor.run()
             export = package.export_results()
             self.assertEqual(len(export["Completed"]["Create"]), 1)
-            package.save(stop_autosave=True)
 
     @mock_ssm
     @mock_cloudformation
@@ -130,20 +128,19 @@ class TestExecutor(unittest.TestCase):
             executor1.run()
             export1 = package1.export_results()
             self.assertEqual(len(export1["Completed"]["Create"]), 1)
-            package1.save(stop_autosave=True)
+            package1.save()
             parameter = ssm_client.get_parameter(Name="test")["Parameter"]
             self.assertEqual(parameter["Value"], "valueCloudFormation1")
             # Remove the deployments from the package, which requires to
             # destroy the existing deployment. Then, check that the SSM
             # parameter doesn't exist anymore
-            package3 = Package()
-            package3.package["Modules"]["cloudformation1"]["Deployments"] = []
-            package3.full_init(self.orga)
-            executor3 = Executor(package3)
-            executor3.run()
-            export3 = package3.export_results()
-            self.assertEqual(len(export3["Completed"]["Destroy"]), 1)
-            package3.save(stop_autosave=True)
+            package2 = Package()
+            package2.package["Modules"]["cloudformation1"]["Deployments"] = []
+            package2.full_init(self.orga)
+            executor2 = Executor(package2)
+            executor2.run()
+            export2 = package2.export_results()
+            self.assertEqual(len(export2["Completed"]["Destroy"]), 1)
             with self.assertRaises(ssm_client.exceptions.ParameterNotFound):
                 parameter = ssm_client.get_parameter(Name="test")["Parameter"]
 
@@ -166,7 +163,6 @@ class TestExecutor(unittest.TestCase):
             executor.run()
             export = package.export_results()
             self.assertEqual(len(export["Completed"]["Create"]), 1)
-            package.save(stop_autosave=True)
 
     @mock_ssm
     def test_terraform_create_update_destroy(self):
@@ -187,7 +183,7 @@ class TestExecutor(unittest.TestCase):
             executor1 = Executor(package1)
             executor1.run()
             export1 = package1.export_results()
-            package1.save(stop_autosave=True)
+            package1.save()
             self.assertEqual(len(export1["Completed"]["Create"]), 1)
             self.assertIn(
                 "SSMParameterARN", export1["Completed"]["Create"][0]["Outputs"]
@@ -202,7 +198,7 @@ class TestExecutor(unittest.TestCase):
             executor2 = Executor(package2)
             executor2.run()
             export2 = package2.export_results()
-            package2.save(stop_autosave=True)
+            package2.save()
             self.assertEqual(len(export2["Completed"]["Update"]), 1)
             parameter = ssm_client.get_parameter(Name="test")["Parameter"]
             self.assertEqual(parameter["Value"], "newValue")
@@ -216,6 +212,5 @@ class TestExecutor(unittest.TestCase):
             executor3.run()
             export3 = package3.export_results()
             self.assertEqual(len(export3["Completed"]["Destroy"]), 1)
-            package3.save(stop_autosave=True)
             with self.assertRaises(ssm_client.exceptions.ParameterNotFound):
                 parameter = ssm_client.get_parameter(Name="test")["Parameter"]

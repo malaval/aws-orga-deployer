@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.3] 2023/09/20
+
+* Disallowed additional properties in the YAML package definition file. That might break upgrade to future versions if we add new properties, but this reduces the likehood to make mistakes today (e.g. attribute `Variables` not correctly indented).
+* Removed the CLI argument `--disable-periodic-state-saving` and introduced the CLI argument `--save-state-every-seconds`. Previously, the package state was saved to S3 every 10 seconds during the execution of a `apply` or `update-hash` command. However, if the execution takes a lot of time, this could lead to a large number of object versions in S3. We changed the default behavior: the package state is now only saved at the end of the execution, unless the new CLI argument is specified.
+
 ## [0.1.2] 2023/09/15
 
 * Add support of the CLI argument `--disable-periodic-state-saving` for the command `apply`. By default, AWS Orga Deployer saves the package state every 10 seconds during the execution of the command `apply`. This enables to recover from an eventual crash of AWS Orga Deployer without losing the information that certain deployments may have completed. However, this can lead to a large number of object versions in S3.

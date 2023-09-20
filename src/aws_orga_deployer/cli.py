@@ -22,6 +22,17 @@ def _tag_type(value: str) -> str:
     if not pattern.match(value):
         raise argparse.ArgumentTypeError("Invalid format. Must be TAG_KEY=TAG_VALUE")
     return value
+    
+    
+def _check_positive_int(value: str) -> int:
+    """Check that the argument value is an integer larger than 0."""
+    try:
+        int_value = int(value)
+        if int_value <= 0:
+            raise argparse.ArgumentTypeError(f"{value} must be larger than zero")
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"{value} is not an integer")
+    return int_value
 
 
 def _parse_cli_args() -> None:
@@ -231,7 +242,7 @@ def _parse_cli_args() -> None:
         parents=[parent_list_preview_apply],
     )
 
-    # Arguments that are common to preview and deploy commands
+    # Arguments that are common to preview and apply commands
     parent_preview_apply = argparse.ArgumentParser(add_help=False)
     parent_preview_apply.add_argument(
         "--non-interactive",
@@ -247,6 +258,18 @@ def _parse_cli_args() -> None:
         ),
     )
 
+    # Arguments that are common to apply and update-hash
+    parent_apply_update_hash = argparse.ArgumentParser(add_help=False)
+    parent_apply_update_hash.add_argument(
+        "--save-state-every-seconds",
+        type=_check_positive_int,
+        metavar="SECONDS",
+        default=0, # 0 means that package state is not saved periodically
+        help=(
+            "Save the package state periodically to S3 during execution to recover from an abrupt interruption. Specify a value in seconds larger than zero."
+        ),
+    )
+
     # Preview command
     subparsers.add_parser(
         "preview",
@@ -258,18 +281,12 @@ def _parse_cli_args() -> None:
     )
 
     # Apply command
-    apply_parser = subparsers.add_parser(
+    subparsers.add_parser(
         "apply",
         help="Apply pending deployments",
-        parents=[parent_list_preview_apply, parent_preview_apply],
-    )
-    apply_parser.add_argument(
-        "--disable-periodic-state-saving",
-        action="store_true",
-        help=(
-            "Disable automatic saving of package state in S3 every 10 seconds to reduce"
-            " the number of object versions"
-        ),
+        parents=[
+            parent_list_preview_apply, parent_preview_apply, parent_apply_update_hash
+        ],
     )
 
     # Update-hash command
@@ -279,7 +296,9 @@ def _parse_cli_args() -> None:
             "Update the value of the module hash. This is useful to edit the"
             " module source code without needing to update deployments"
         ),
-        parents=[parent_list_preview_apply, parent_preview_apply],
+        parents=[
+            parent_list_preview_apply, parent_preview_apply, parent_apply_update_hash
+        ],
     )
 
     # Parse the arguments and store them as a dict for use by other modules

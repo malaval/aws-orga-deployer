@@ -36,3 +36,11 @@ If you have already created resources using Terraform, CloudFormation or Python 
     6. Add a dict attribute `Outputs` in `item["CurrentState"]`. It must be either an empty dict, or populated with the output values of the deployments.
 7. Upload the modified version of the package state `state.json`.
 8. Re-execute `aws-orga-deployer list` to check that there are no pending deployments to create.
+
+## Why certain Terraform deployments fail and the error logs in `stderr.log` contain `the cached package for xxx does not match any of the checksums recorded in the dependency lock file`?
+
+Terraform finds and installs providers during the initialization step (`terraform init`). AWS Orga Deployer uses a shared directory to store provider binairies, instead of each deployment downloading and storing its own copy of the providers, to save disk space and network bandwidth.
+
+This error may occur when multiple Terraform deployments are launched simultaneously. If the shared directory doesn't yet contain the required providers, each deployment tries to download and store the provider binairies into the shared directory, leading to concurrency issues. The [Terraform documentation](https://developer.hashicorp.com/terraform/cli/config/config-file) mentions "the plugin cache directory is not guaranteed to be concurrency safe. The provider installer's behavior in environments with multiple terraform init calls is undefined."
+
+If this error occurs, retry the failed tasks. To prevent the error from occuring, disable concurrency during the first execution of the package (set `ConcurrentWorkers: 1` in the package definition file).

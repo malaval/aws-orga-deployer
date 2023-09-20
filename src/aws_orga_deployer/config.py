@@ -33,9 +33,6 @@ DEFAULT_ORGA_CACHE_EXPIRATION: int = 5 * 60
 # Name of the package state file in S3
 STATE_FILENAME: str = "state.json"
 
-# Frequency in seconds at which the package state file is saved to S3
-STATE_PERIOD_AUTO_SAVE: int = 10
-
 # Name of the optional file in the module folder that contains patterns of
 # filename to include or exclude to calculate module hash
 HASH_CONFIG_FILENAME: str = "hash-config.json"

@@ -183,12 +183,13 @@ class CurrentStateStore(UserDict):
     CurrentDeploymentDetails.
 
     Attributes:
-        period: Frequency at which the package state is saved to S3.
+        period: Frequency at which the package state is saved to S3. If the
+            period is 0, the periodic saving is disabled.
     """
 
     period: int
 
-    def __init__(self, period: int = config.STATE_PERIOD_AUTO_SAVE):
+    def __init__(self, period: int = 0):
         def func() -> None:
             # pylint: disable = bare-except
             # We need to catch any exceptions so that this thread never stops
@@ -219,12 +220,10 @@ class CurrentStateStore(UserDict):
             pass
         super().__init__(dict_content)
         self._must_stop: bool = False
-        self._data_copy: Dict = {}
-        self.save()
+        self._data_copy: Dict = deepcopy(self.data)
         # Initialize a thread that saves the state every `period` seconds if it
-        # has changed since the last time it was saved to S3, unless disabled
-        # by CLI arguments
-        if config.CLI.get("disable_periodic_state_saving", False) is False:
+        # has changed since the last time it was saved to S3, unless disabled.
+        if period > 0:
             Thread(target=func, daemon=True, name="CurrentStateStore").start()
 
     def save(self) -> bool:

@@ -111,11 +111,10 @@ class TestPackage(unittest.TestCase):
         self.assertEqual(len(export["Completed"]["Create"]), 1)
         self.assertEqual(export["Completed"]["Create"][0]["ResultedInChanges"], True)
         # Reload the package and check that the current state is loaded from S3
-        package1.save(stop_autosave=True)
+        package1.save()
         package2 = Package()
         package2.full_init(self.orga)
         self.assertIn(key, package2.current)
-        package2.save(stop_autosave=True)
 
     def test_update(self):
         """Test the class Package with deployments to update."""
@@ -126,7 +125,7 @@ class TestPackage(unittest.TestCase):
         key, _, _, _ = package1.next()
         package1.complete(key, made_changes=True, result="Summary")
         package1.current[key].variables["varPython1"] = "old_value"
-        package1.save(stop_autosave=True)
+        package1.save()
         # Reload the package and check that there is one pending update to
         # make
         package2 = Package()
@@ -141,11 +140,10 @@ class TestPackage(unittest.TestCase):
         except graph.NoMorePendingStep:
             pass
         # Reload the package and check that there are pending changes
-        package2.save(stop_autosave=True)
+        package2.save()
         package3 = Package()
         package3.full_init(self.orga)
         self.assertFalse(package3.analyze_changes())
-        package3.save(stop_autosave=True)
 
     # Change the command to preview
     def test_update_preview_mode(self):
@@ -165,11 +163,10 @@ class TestPackage(unittest.TestCase):
                 pass
             # Reload the package and check that there is are still pending
             # deployments because it was preview mode
-            package1.save(stop_autosave=True)
+            package1.save()
             package2 = Package()
             package2.full_init(self.orga)
             self.assertTrue(package2.analyze_changes())
-            package2.save(stop_autosave=True)
 
     def test_update_hash(self):
         """Test the `update_hash` function."""
@@ -187,7 +184,7 @@ class TestPackage(unittest.TestCase):
         package1.current[key].variables = {"var2": "value2"}
         # Reload the package and execute the `update_hash` function for all
         # steps, until there are no more steps to process
-        package1.save(stop_autosave=True)
+        package1.save()
         package2 = Package()
         package2.full_init(self.orga)
         try:
@@ -208,13 +205,12 @@ class TestPackage(unittest.TestCase):
         self.assertEqual(made_changes, set([True, False]))
         # Reload the package and there should be one step with no changes to
         # be made (module hash changed) and one with update (variables updated)
-        package2.save(stop_autosave=True)
+        package2.save()
         package3 = Package()
         package3.full_init(self.orga)
         export = package3.export_changes()
         self.assertEqual(len(export["NoChanges"]), 1)
         self.assertEqual(len(export["PendingChanges"]["Update"]), 1)
-        package3.save(stop_autosave=True)
 
     def test_destroy(self):
         """Test the class Package with deployments to destroy."""
@@ -226,7 +222,7 @@ class TestPackage(unittest.TestCase):
         # Reload the package and remove the deployments in the target state to
         # simulate that a resource exists in the current state, but not in the
         # target state and it must be destroyed
-        package1.save(stop_autosave=True)
+        package1.save()
         package2 = Package()
         for module_block in package2.package["Modules"].values():
             module_block["Deployments"] = []
@@ -238,12 +234,11 @@ class TestPackage(unittest.TestCase):
         key, _, _, _ = package2.next()
         package2.complete(key, made_changes=True, result="Summary")
         # Reload the package and check that there are no deployments to destroy
-        package2.save(stop_autosave=True)
+        package2.save()
         package3 = Package()
         package3.full_init(self.orga)
         result = package3.export_changes()
         self.assertNotIn("Delete", result["PendingChanges"])
-        package3.save(stop_autosave=True)
 
     def test_nonexistent_module(self):
         """Test the class Package with deployments in the current state for
@@ -254,14 +249,13 @@ class TestPackage(unittest.TestCase):
         # Retrieve a step to process and complete the deployment
         key, _, _, _ = package1.next()
         package1.complete(key, made_changes=True, result="Summary")
-        package1.save(stop_autosave=True)
+        package1.save()
         # Reload the package and remove all the module blocks. It should raise
         # a PackageError exception
         package2 = Package()
         package2.package["Modules"] = {}
         with self.assertRaises(PackageError):
             package2.full_init(self.orga)
-        package2.save(stop_autosave=True)
 
     # Add a filter to include only the "us-east-1" region
     def test_cli_filters(self):
@@ -289,7 +283,6 @@ class TestPackage(unittest.TestCase):
             except graph.NoMorePendingStep:
                 pass
             self.assertEqual(nb_steps_returned, nb_pending)
-            package1.save(stop_autosave=True)
 
     def test_nonexistent_account(self):
         """Test the behavior with current deployments in AWS accounts that
@@ -309,7 +302,7 @@ class TestPackage(unittest.TestCase):
             outputs={},
             last_changed_time="",
         )
-        package1.save(stop_autosave=True)
+        package1.save()
         # Reload the package and check that there should be one pending but
         # skipped destroy change, because the fake AWS account ID doesn't
         # belong to the list of active accounts in the organization
@@ -317,7 +310,6 @@ class TestPackage(unittest.TestCase):
         package2.full_init(self.orga)
         export = package2.export_changes()
         self.assertEqual(len(export["PendingButSkippedChanges"]["Destroy"]), 1)
-        package2.save(stop_autosave=True)
 
     def test_fail(self):
         """Test the behavior with a failed deployment."""
@@ -348,7 +340,6 @@ class TestPackage(unittest.TestCase):
             # for "terraform1" module
             key, _, _, _ = package1.next()
             self.assertEqual(key.module, "terraform1")
-            package1.save(stop_autosave=True)
 
     def test_conditional_update_1(self):
         """Test the behavior with conditional updates and output values that
@@ -375,7 +366,7 @@ class TestPackage(unittest.TestCase):
         )
         package1.current[key].module_hash = "fake_hash"
         # Reload the package
-        package1.save(stop_autosave=True)
+        package1.save()
         package2 = Package()
         package2.full_init(self.orga)
         # Check that there is one update, and one conditional update because
@@ -410,7 +401,6 @@ class TestPackage(unittest.TestCase):
                 for item in export["Completed"]["ConditionalUpdate"]
             ],
         )
-        package2.save(stop_autosave=True)
 
     def test_conditional_update_2(self):
         """Test the behavior with conditional updates and output values that
@@ -437,7 +427,7 @@ class TestPackage(unittest.TestCase):
         )
         package1.current[key].module_hash = "fake_hash"
         # Reload the package
-        package1.save(stop_autosave=True)
+        package1.save()
         package2 = Package()
         package2.full_init(self.orga)
         # Check that there is one update, and one conditional update before
@@ -473,7 +463,6 @@ class TestPackage(unittest.TestCase):
         self.assertTrue(
             export["Completed"]["ConditionalUpdate"][0]["ResultedInChanges"]
         )
-        package2.save(stop_autosave=True)
 
     def test_no_update_needed(self):
         """Test the behavior when there are no updates to make."""
@@ -487,11 +476,10 @@ class TestPackage(unittest.TestCase):
         except graph.NoMorePendingStep:
             pass
         # Reload the package and check that there are no pending changes
-        package1.save(stop_autosave=False)
+        package1.save()
         package2 = Package()
         package2.full_init(self.orga)
         self.assertFalse(package2.analyze_changes())
-        package2.save(stop_autosave=True)
 
     # Set the CLI argument `--force-update`
     def test_force_update(self):
@@ -512,11 +500,10 @@ class TestPackage(unittest.TestCase):
             except graph.NoMorePendingStep:
                 pass
             # Reload the package and check that there are pending changes
-            package1.save(stop_autosave=True)
+            package1.save()
             package2 = Package()
             package2.full_init(self.orga)
             self.assertTrue(package2.analyze_changes())
-            package2.save(stop_autosave=True)
 
     # Set the CLI command to "preview"
     def test_preview_with_dependencies(self):
@@ -542,7 +529,6 @@ class TestPackage(unittest.TestCase):
             # pending changes
             export = package1.export_results()
             self.assertGreaterEqual(len(export["Failed"]["Create"]), 1)
-            package1.save(stop_autosave=True)
 
     def test_missing_dependencies_not_ignored_1(self):
         """Test the behavior with dependencies that don't exist with the attribute
@@ -556,7 +542,6 @@ class TestPackage(unittest.TestCase):
             package = Package()
             with self.assertRaises(graph.GraphError):
                 package.full_init(self.orga)
-            package.save(stop_autosave=True)
 
     def test_missing_dependencies_not_ignored_2(self):
         """Test the behavior with dependencies that don't exist with the attribute
@@ -574,7 +559,6 @@ class TestPackage(unittest.TestCase):
             deployments[0]["Dependencies"][0]["IgnoreIfNotExists"] = True
             with self.assertRaises(graph.GraphError):
                 package.full_init(self.orga)
-            package.save(stop_autosave=True)
 
     def test_missing_dependencies_ignored(self):
         """Test the behavior with dependencies that don't exist with the attribute
@@ -606,7 +590,53 @@ class TestPackage(unittest.TestCase):
                 "terraform1", "123456789012", "us-east-2"
             )
             self.assertEqual(package.current[key].variables["var1"], "value1")
-            package.save(stop_autosave=True)
+
+    def test_package_save_state_enabled(self):
+        """Test the behavior with the argument `save-state-every-seconds` = 1."""
+        with patch(
+            "aws_orga_deployer.config.CLI",
+            update_cli_filters({"save_state_every_seconds": 1}),
+        ):
+            package1 = Package()
+            package1.full_init(self.orga)
+            # Mark all steps as completed
+            try:
+                while True:
+                    key, _, _, _ = package1.next()
+                    package1.complete(key, made_changes=True, result="Summary")
+            except graph.NoMorePendingStep:
+                pass
+            time.sleep(2)
+            package2 = Package()
+            package2.full_init(self.orga)
+            export = package2.export_changes()
+            self.assertNotIn("PendingChanges", export.keys())
+            package1.save(stop_autosave=True)
+            package2.save(stop_autosave=True)
+
+    def test_package_save_state_disabled(self):
+        """Test the behavior without the argument `save-state-every-seconds`."""
+        package1 = Package()
+        package1.full_init(self.orga)
+        # Mark all steps as completed
+        try:
+            while True:
+                key, _, _, _ = package1.next()
+                package1.complete(key, made_changes=True, result="Summary")
+        except graph.NoMorePendingStep:
+            pass
+        # First attempt without saving
+        time.sleep(2)
+        package2 = Package()
+        package2.full_init(self.orga)
+        export = package2.export_changes()
+        self.assertIn("PendingChanges", export.keys())
+        # Second attempt after saving
+        package1.save()
+        package3 = Package()
+        package3.full_init(self.orga)
+        export = package3.export_changes()
+        self.assertNotIn("PendingChanges", export.keys())
 
 
 class TestInvalidPackage(unittest.TestCase):

@@ -106,7 +106,8 @@ class Package:
         self.orga = orga
         self.target = {}
         self.modules_config = {}
-        self.current = CurrentStateStore()
+        auto_save_period = config.CLI.get("save_state_every_seconds", 0)
+        self.current = CurrentStateStore(period=auto_save_period)
         self.graph = DeploymentGraph()
         self._init_target_deployments()
         self._init_cli_filters()

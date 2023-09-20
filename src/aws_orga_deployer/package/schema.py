@@ -18,10 +18,12 @@ def validate(content: Dict) -> None:
     """
     schema = {
         "type": "object",
+        "additionalProperties": False,
         "properties": {
             "PackageConfiguration": {
                 "description": "Package configuration settings",
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "S3Bucket": {
                         "description": "Name of the S3 bucket to store persistent data",
@@ -95,6 +97,7 @@ def validate(content: Dict) -> None:
                 "patternProperties": {
                     "^": {
                         "type": "object",
+                        "additionalProperties": False,
                         "properties": {
                             "Configuration": {
                                 "description": "Module configuration settings",
@@ -109,6 +112,7 @@ def validate(content: Dict) -> None:
                                 "patternProperties": {
                                     "^": {
                                         "type": "object",
+                                        "additionalProperties": False,
                                         "properties": {
                                             "Module": {
                                                 "type": "string",
@@ -132,9 +136,11 @@ def validate(content: Dict) -> None:
                                 "type": "array",
                                 "items": {
                                     "type": "object",
+                                    "additionalProperties": False,
                                     "properties": {
                                         "Include": {
                                             "type": "object",
+                                            "additionalProperties": False,
                                             "properties": {
                                                 "AccountIds": {
                                                     "type": "array",
@@ -173,6 +179,7 @@ def validate(content: Dict) -> None:
                                         },
                                         "Exclude": {
                                             "type": "object",
+                                            "additionalProperties": False,
                                             "properties": {
                                                 "AccountIds": {
                                                     "type": "array",
@@ -215,6 +222,7 @@ def validate(content: Dict) -> None:
                                             "patternProperties": {
                                                 "^": {
                                                     "type": "object",
+                                                    "additionalProperties": False,
                                                     "properties": {
                                                         "Module": {
                                                             "type": "string",
@@ -242,6 +250,7 @@ def validate(content: Dict) -> None:
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
+                                                "additionalProperties": False,
                                                 "properties": {
                                                     "Module": {
                                                         "type": "string",
@@ -267,7 +276,6 @@ def validate(content: Dict) -> None:
                         "required": ["Deployments"],
                     }
                 },
-                "additionalProperties": False,
             },
         },
         "required": ["PackageConfiguration", "Modules"],

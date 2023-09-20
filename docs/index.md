@@ -27,6 +27,8 @@ aws-orga-deployer --help
 * Integration with AWS Organizations to retrieve dynamically the list of accounts and organizational units. AWS Orga Deployer allows to define a list of accounts and regions where each module must be deployed using many inclusion or exclusion criteria, and specify different parameters for each scope (e.g. different retention policy between production and non-production accounts).
 * Maintains the state of a package that contains the list of existing module deployments and their parameters, which makes it much faster to evaluate which module deployments must be created, updated or destroyed, even with large AWS organizations.
 
+To read more about how it compares with other tools, read the [Medium story](https://medium.com/@malavaln/9ed609c1cb25).
+
 ## Next steps
 
 To start using AWS Orga Deployer, go to the page [Getting Started](getting-started.html).

@@ -6,7 +6,7 @@
 
 ## Introduction
 
-AWS Orga Deployer makes it easier to deploy and manage infrastructure-as-code at the scale of an AWS Organizations. It enables to deploy Terraform or CloudFormation templates and to execute Python scripts in multiple AWS accounts and multiple regions, making it particularly suitable for building AWS foundations (or Landing Zones).
+AWS Orga Deployer makes it easier to deploy and manage infrastructure-as-code at the scale of an AWS organization. It enables to deploy Terraform or CloudFormation templates and to execute Python scripts in multiple AWS accounts and multiple regions, making it particularly suitable for building AWS foundations (or Landing Zones).
 
 To get started, develop modules (Terraform or CloudFormation templates or Python scripts), create a package definition file to specify which modules to deploy in which accounts and regions and using which parameters, and let AWS Orga Deployer deploy modules and manage dependencies between deployments.
 

@@ -82,10 +82,8 @@ class TestPackageStateStore(unittest.TestCase):
         state.stop()
         state_reloaded.stop()
 
-    def test_save_automatically(self):
-        """Check that the package state is automatically saved to S3. Is
-        executed after the test above.
-        """
+    def test_save_automatically_enabled(self):
+        """Check that the package state is automatically saved to S3."""
         # Create a `PackageStateStore` object that saves to S3 every 0.1
         # seconds, and update its value
         state = store.CurrentStateStore(period=0.1)
@@ -100,3 +98,15 @@ class TestPackageStateStore(unittest.TestCase):
         # has completed
         state.stop()
         state_reloaded.stop()
+
+    def test_save_automatically_disabled(self):
+        """Check the behavior when the periodic saving is disabled."""
+        # Create a `PackageStateStore` object with periodic saving disabled
+        state = store.CurrentStateStore(period=0)
+        state[self.key] = self.value
+        time.sleep(0.5)
+        # Reload the package state from S3 and check that the value was not
+        # save to S3
+        state_reloaded = store.CurrentStateStore()
+        self.assertNotIn(self.key, state_reloaded.keys())
+        self.assertNotIn(self.value, state_reloaded.values())
