@@ -18,7 +18,7 @@ def validate(content: Dict) -> None:
     """
     schema = {
         "type": "object",
-        "additionalProperties": False,
+        "additionalProperties": True,
         "properties": {
             "PackageConfiguration": {
                 "description": "Package configuration settings",
