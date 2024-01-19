@@ -1,4 +1,5 @@
 """Use moto to mock boto3 resources for testing."""
+
 # COMPLETED
 from os import path
 from unittest.mock import patch

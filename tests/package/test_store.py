@@ -1,4 +1,5 @@
 """Test the module `aws_orga_deployer.package.store`."""
+
 # COMPLETED
 import time
 import unittest
@@ -21,13 +22,11 @@ class TestModuleAccountRegionKey(unittest.TestCase):
     def test_init_dict(self):
         """Check equivalence when loaded from a dict."""
         key1 = store.ModuleAccountRegionKey("Module", "AccountId", "Region")
-        key2 = store.ModuleAccountRegionKey(
-            {
-                "Module": "Module",
-                "AccountId": "AccountId",
-                "Region": "Region",
-            }
-        )
+        key2 = store.ModuleAccountRegionKey({
+            "Module": "Module",
+            "AccountId": "AccountId",
+            "Region": "Region",
+        })
         self.assertEqual(key1, key2)
 
     def test_export(self):

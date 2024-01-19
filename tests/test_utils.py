@@ -1,4 +1,5 @@
 """Test the module `aws_orga_deployer.utils`."""
+
 # COMPLETED
 import unittest
 

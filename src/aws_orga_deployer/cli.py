@@ -1,4 +1,5 @@
 """Parse command-line interface arguments."""
+
 import argparse
 import logging
 import re
@@ -22,8 +23,8 @@ def _tag_type(value: str) -> str:
     if not pattern.match(value):
         raise argparse.ArgumentTypeError("Invalid format. Must be TAG_KEY=TAG_VALUE")
     return value
-    
-    
+
+
 def _check_positive_int(value: str) -> int:
     """Check that the argument value is an integer larger than 0."""
     try:
@@ -264,9 +265,10 @@ def _parse_cli_args() -> None:
         "--save-state-every-seconds",
         type=_check_positive_int,
         metavar="SECONDS",
-        default=0, # 0 means that package state is not saved periodically
+        default=0,  # 0 means that package state is not saved periodically
         help=(
-            "Save the package state periodically to S3 during execution to recover from an abrupt interruption. Specify a value in seconds larger than zero."
+            "Save the package state periodically to S3 during execution to recover from"
+            " an abrupt interruption. Specify a value in seconds larger than zero."
         ),
     )
 
@@ -285,7 +287,9 @@ def _parse_cli_args() -> None:
         "apply",
         help="Apply pending deployments",
         parents=[
-            parent_list_preview_apply, parent_preview_apply, parent_apply_update_hash
+            parent_list_preview_apply,
+            parent_preview_apply,
+            parent_apply_update_hash,
         ],
     )
 
@@ -297,7 +301,9 @@ def _parse_cli_args() -> None:
             " module source code without needing to update deployments"
         ),
         parents=[
-            parent_list_preview_apply, parent_preview_apply, parent_apply_update_hash
+            parent_list_preview_apply,
+            parent_preview_apply,
+            parent_apply_update_hash,
         ],
     )
 

@@ -1,4 +1,5 @@
 """Base class inherited by engine classes."""
+
 import hashlib
 import json
 import logging
@@ -132,20 +133,16 @@ class BaseEngine:
             )
         except (FileNotFoundError, IOError):
             LOGGER.debug(
-                (
-                    "[%s] No hash-config.json file found. Using default: Include=%s"
-                    " Exclude=%s"
-                ),
+                "[%s] No hash-config.json file found. Using default: Include=%s"
+                " Exclude=%s",
                 self.name,
                 ",".join(self.included_patterns),
                 ",".join(self.excluded_patterns),
             )
         except (ValueError, AssertionError):
             LOGGER.debug(
-                (
-                    "[%s] hash-config.json is invalid. Using default: Include=%s"
-                    " Exclude=%s"
-                ),
+                "[%s] hash-config.json is invalid. Using default: Include=%s"
+                " Exclude=%s",
                 self.name,
                 ",".join(self.included_patterns),
                 ",".join(self.excluded_patterns),

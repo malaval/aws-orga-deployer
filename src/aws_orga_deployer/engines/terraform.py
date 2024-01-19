@@ -1,4 +1,5 @@
 """Engine for Terraform modules."""
+
 import json
 import shutil
 from os import path
@@ -121,7 +122,10 @@ class Engine(base.BaseEngine):
         # Set arguments and environment variables that are common to all
         # Terraform commands
         common_args = ["-no-color"]
-        common_env = {"TF_PLUGIN_CACHE_DIR": engine_cache_dir}
+        common_env = {
+            "TF_PLUGIN_CACHE_DIR": engine_cache_dir,
+            "TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE": "true",
+        }
         # `terraform init` is needed whether the command or the action
         commands = [
             base.StepCommand(

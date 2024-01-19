@@ -1,4 +1,5 @@
 """Load the package definition file and determine the modules to deploy."""
+
 import json
 import logging
 from copy import deepcopy
@@ -515,10 +516,8 @@ class Package:
             self.graph.complete(
                 key,
                 False,
-                (
-                    "No changes required because the dependent output values have not"
-                    " changed"
-                ),
+                "No changes required because the dependent output values have not"
+                " changed",
             )
 
     def get_module_config(self, key: ModuleAccountRegionKey) -> Dict[str, Any]:

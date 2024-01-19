@@ -1,4 +1,5 @@
 """Test the module `aws_orga_deployer.execution`."""
+
 import shutil
 import tempfile
 import unittest
@@ -89,13 +90,11 @@ class TestExecutor(unittest.TestCase):
         """Test to preview changes with the CloudFormation module."""
         with patch(
             "aws_orga_deployer.config.CLI",
-            update_cli_filters(
-                {
-                    "temp_dir": self.temp_dir,
-                    "command": "preview",
-                    "include_modules": ["cloudformation1"],
-                }
-            ),
+            update_cli_filters({
+                "temp_dir": self.temp_dir,
+                "command": "preview",
+                "include_modules": ["cloudformation1"],
+            }),
         ):
             package = Package()
             package.full_init(self.orga)
@@ -149,13 +148,11 @@ class TestExecutor(unittest.TestCase):
         """Test to preview changes with the Terraform module."""
         with patch(
             "aws_orga_deployer.config.CLI",
-            update_cli_filters(
-                {
-                    "temp_dir": self.temp_dir,
-                    "command": "preview",
-                    "include_modules": ["terraform1"],
-                }
-            ),
+            update_cli_filters({
+                "temp_dir": self.temp_dir,
+                "command": "preview",
+                "include_modules": ["terraform1"],
+            }),
         ):
             package = Package()
             package.full_init(self.orga)

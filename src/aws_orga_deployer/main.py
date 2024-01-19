@@ -1,4 +1,5 @@
 """Main program module."""
+
 import sys
 
 from aws_orga_deployer import cli, config, execution, modules, utils

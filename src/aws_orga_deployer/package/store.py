@@ -1,4 +1,5 @@
 """Module with classes used to store information about module deployments."""
+
 # COMPLETED
 import logging
 import time

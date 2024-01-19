@@ -1,4 +1,5 @@
 """Wrapper of CloudFormation modules that is executed in a subprocess."""
+
 import random
 import string
 import time

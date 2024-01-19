@@ -1,4 +1,5 @@
 """This Python module does nothing but return fake results."""
+
 import boto3
 
 

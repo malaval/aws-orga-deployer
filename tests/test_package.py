@@ -1,4 +1,5 @@
 """Test the module `aws_orga_deployer.package.__init__`."""
+
 import time
 import unittest
 from unittest.mock import patch

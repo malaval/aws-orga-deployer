@@ -1,4 +1,5 @@
 """General utility functions for test modules."""
+
 from copy import deepcopy
 
 from aws_orga_deployer import config

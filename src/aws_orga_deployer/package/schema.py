@@ -1,4 +1,5 @@
 """Define the schema of the package definition file."""
+
 from typing import Dict
 
 import jsonschema
@@ -40,7 +41,7 @@ def validate(content: Dict) -> None:
                         "type": "string",
                         "pattern": "^.+\\/$",
                     },
-                    "concurrentThreads": {
+                    "ConcurrentWorkers": {
                         "description": "Number of concurrent threads deploying modules",
                         "type": "number",
                         "minimum": 1,

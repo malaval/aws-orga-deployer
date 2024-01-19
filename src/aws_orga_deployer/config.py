@@ -1,4 +1,5 @@
 """Constants or variables shared across multiple modules."""
+
 # COMPLETED
 from typing import Any, Dict
 

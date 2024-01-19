@@ -1,4 +1,5 @@
 """Test the module `aws_orga_deployer.package.graph`."""
+
 # COMPLETED
 import time
 import unittest

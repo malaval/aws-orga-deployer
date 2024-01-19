@@ -1,4 +1,5 @@
 """Engine for CloudFormation modules."""
+
 from os import path
 from typing import Any, Dict, List
 

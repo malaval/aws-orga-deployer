@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] 2024/01/19
+
+* Fixed bug in package definition validation module preventing from using the `ConcurrentWorkers` attribute.
+* Fixed bug with Terraform engines: with newer Terraform versions, providers must be downloaded if the lock file doesn't exist, even if providers exist in the shared cache. To prevent that from happening and keep bandwidth usage low, I set the environment variable `TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE` to `true`.
+
 ## [0.1.3] 2023/09/20
 
 * Disallowed additional properties in the YAML package definition file. That might break upgrade to future versions if we add new properties, but this reduces the likehood to make mistakes today (e.g. attribute `Variables` not correctly indented).

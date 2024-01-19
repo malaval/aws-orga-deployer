@@ -1,4 +1,5 @@
 """Information on AWS accounts and organizational units."""
+
 # COMPLETED
 import logging
 import re
@@ -77,10 +78,8 @@ class OrgaParser:
         # the last time
         try:
             LOGGER.debug(
-                (
-                    "Retrieving the last modification date of the cache of information"
-                    " on accounts and organizational units at s3://%s/%s"
-                ),
+                "Retrieving the last modification date of the cache of information"
+                " on accounts and organizational units at s3://%s/%s",
                 bucket,
                 key,
             )
@@ -120,10 +119,8 @@ class OrgaParser:
                 )
             else:
                 LOGGER.exception(
-                    (
-                        "Failed to load the cache of information on accounts and"
-                        " organizational units from S3"
-                    ),
+                    "Failed to load the cache of information on accounts and"
+                    " organizational units from S3",
                     exc_info=config.CLI["debug"],
                 )
             return False
