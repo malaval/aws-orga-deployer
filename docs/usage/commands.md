@@ -120,7 +120,7 @@ List the existing module deployments and the module deployments to create, updat
             }
         ]
     },
-    "NoChanges": {
+    "NoChanges": [
         {
             "Deployment": {
                 "Module": "string",
@@ -138,7 +138,7 @@ List the existing module deployments and the module deployments to create, updat
                 "LastChangedTime": "string"
             }
         }
-    }
+    ]
 }
 ```
 
