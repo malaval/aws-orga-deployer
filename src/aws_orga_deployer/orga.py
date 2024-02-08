@@ -426,3 +426,19 @@ class OrgaParser:
         if not account_id in self.accounts:
             return "undefined"
         return self.accounts[account_id]["Name"]
+
+    def account_region_exists(self, account_id: str, region: str) -> bool:
+        """Return True if the account exists in the organization and the region
+        is enabled in this account.
+
+        Args:
+            account_id: Account ID
+            region: Region
+
+        Returns:
+            True if the account exists and the region is enabled.
+        """
+        if account_id in self.accounts:
+            if region in self.accounts[account_id]["EnabledRegions"]:
+                return True
+        return False

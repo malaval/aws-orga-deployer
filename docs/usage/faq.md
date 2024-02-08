@@ -13,7 +13,9 @@ There is no command like `terraform destroy` in AWS Orga Deployer. To destroy a 
 
 ## What if I need to close an AWS account?
 
-If you have deployed modules in an account that you need to close, you should use AWS Orga Deployer to destroy the module deployments before closing the account. If the account is closed before destroying exising deployments, AWS Orga Deployer considers that these deployments must be destroyed but these changes are skipped. Note that AWS Orga Deployer will wrongly indicate that the changes are skipped because of CLI arguments, but this is because the included scope by default is all ative accounts. In that case, you should edit manually the package state to remove the corresponding deployments (see [Package state](../package/state.html)).
+If you have deployed modules in an account that you need to close, you should use AWS Orga Deployer to destroy the module deployments before closing the account.
+
+If the account is closed before destroying exising deployments, AWS Orga Deployer considers that these deployments must be destroyed but these changes are skipped. Note that AWS Orga Deployer will wrongly indicate that the changes are skipped because of CLI arguments, but this is because the included scope by default is all ative accounts. In that case, you should use the command `remove-orphans` to remove orphaned module deployments from the package state.
 
 ## How to migrate existing deployments to AWS Orga Deployer?
 

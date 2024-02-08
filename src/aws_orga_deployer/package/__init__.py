@@ -873,3 +873,43 @@ class Package:
                     item["Outputs"] = self.current[key].outputs
             result[status][action].append(item)
         return result
+
+    def remove_orphans(self, dry_run: bool = False) -> List[Dict[str, Any]]:
+        """Remove the orphaned module deployments from the current state, which
+        correspond to the module deployments for the accounts that not longer
+        exist in the organization, or regions that are not longer enabled in
+        the account.
+
+        Args:
+            dry_run: Set to True to return the list of orphans without making
+                any changes.
+
+        Returns:
+            list: List of dictionaries of the following structure::
+
+                {
+                    "Module" (str),
+                    "AccountId" (str),
+                    "Region" (str)
+                }
+
+        """
+        orphans_removed: List[Dict[str, Any]] = []
+        keys = deepcopy(self.current.keys())
+        for key in keys:
+            if not self.orga.account_region_exists(key.account_id, key.region):
+                orphans_removed.append(key.to_dict())
+                if not dry_run:
+                    del self.current[key]
+        if dry_run:
+            LOGGER.info(
+                "Found %s orphaned module deployments to remove",
+                len(orphans_removed),
+            )
+        else:
+            self.current.save()
+            LOGGER.info(
+                "Removed %s orphaned module deployments",
+                len(orphans_removed),
+            )
+        return orphans_removed

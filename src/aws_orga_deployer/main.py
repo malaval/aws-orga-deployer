@@ -36,6 +36,23 @@ def main() -> None:
         # Retrieve deployed modules and determine the changes to be made. This
         # is not needed for the command "orga"
         package.full_init(orga)
+
+        # If the requested command is "remove-orphans", remove the module
+        # deployments to destroy that correspond to accounts that no longer
+        # exist in the organization, or regions that are not longer enabled in
+        # an account
+        if config.CLI["command"] == "remove-orphans":
+            dry_run = config.CLI["dry_run"]
+            orphans_removed = package.remove_orphans(dry_run)
+            utils.write_output_json(
+                {"OrphanedDeployments": orphans_removed},
+                "the list of orphaned module deployments",
+            )
+            if len(orphans_removed) > 0 and config.CLI["detailed_exitcode"]:
+                sys.exit(2)
+            sys.exit(0)
+
+        # Determine changes to be made
         has_pending_changes = package.analyze_changes()
 
         # If the requested command is "list", export details about deployed

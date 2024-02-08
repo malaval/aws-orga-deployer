@@ -19,6 +19,7 @@ aws-orga-deployer [common_arguments] <command> [command_arguments]
 * [Command `preview`](#command-preview)
 * [Command `apply`](#command-apply)
 * [Command `update-hash`](#command-update-hash)
+* [Command `remove-orphans`](#command-remove-orphans)
 * [How to interrupt commands](#how-to-interrupt-commands)
 * [Command examples](#command-examples)
 
@@ -293,6 +294,32 @@ Update the value of the [module hash](../modules/hash.html) in the current state
 ### Format of the output file
 
 Same as the command `preview`.
+
+## Command `remove-orphans`
+
+Remove orphaned module deployments from the [package state](../packages/state.md) corresponding to AWS accounts that no longer exist in the AWS organization or regions that are no longer enabled in an account.
+
+### Command-specific arguments
+
+* `--detailed-exitcode`: Use this arguments to have three different exit code, instead of two:
+    * `0` if the command succeeded and no orphaned module deployment was found.
+    * `1` if an error occured
+    * `2` if the command succeeded and at least one orphaned module deployment was found
+* `--dry-run`: Return the list of orphaned module deployments to remove without making any changes.
+
+### Format of the output file
+
+```json
+{
+    "OrphanedDeployments": [
+        {
+            "Module": "string",
+            "AccountId": "string",
+            "Region": "string"
+        }
+    ]
+}
+```
 
 ## Deployment scope filters
 

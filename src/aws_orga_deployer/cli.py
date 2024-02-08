@@ -31,8 +31,8 @@ def _check_positive_int(value: str) -> int:
         int_value = int(value)
         if int_value <= 0:
             raise argparse.ArgumentTypeError(f"{value} must be larger than zero")
-    except ValueError:
-        raise argparse.ArgumentTypeError(f"{value} is not an integer")
+    except ValueError as err:
+        raise argparse.ArgumentTypeError(f"{value} is not an integer") from err
     return int_value
 
 
@@ -98,9 +98,9 @@ def _parse_cli_args() -> None:
         "orga", help="Export AWS account list and organization structure"
     )
 
-    # Arguments that are common to the list, preview and apply commands
-    parent_list_preview_apply = argparse.ArgumentParser(add_help=False)
-    parent_list_preview_apply.add_argument(
+    # Detailed exit code
+    parent_detailed_exitcode = argparse.ArgumentParser(add_help=False)
+    parent_detailed_exitcode.add_argument(
         "--detailed-exitcode",
         action="store_true",
         help=(
@@ -108,6 +108,9 @@ def _parse_cli_args() -> None:
             " succeeded with changes present"
         ),
     )
+
+    # Arguments that are common to the list, preview and apply commands
+    parent_list_preview_apply = argparse.ArgumentParser(add_help=False)
     parent_list_preview_apply.add_argument(
         "-f",
         "--force-update",
@@ -240,7 +243,7 @@ def _parse_cli_args() -> None:
     subparsers.add_parser(
         "list",
         help="List deployed modules and deployments to create, update or destroy",
-        parents=[parent_list_preview_apply],
+        parents=[parent_detailed_exitcode, parent_list_preview_apply],
     )
 
     # Arguments that are common to preview and apply commands
@@ -279,7 +282,11 @@ def _parse_cli_args() -> None:
             "Preview resources to add, update or delete when pending deployments are"
             " applied"
         ),
-        parents=[parent_list_preview_apply, parent_preview_apply],
+        parents=[
+            parent_detailed_exitcode,
+            parent_list_preview_apply,
+            parent_preview_apply,
+        ],
     )
 
     # Apply command
@@ -287,6 +294,7 @@ def _parse_cli_args() -> None:
         "apply",
         help="Apply pending deployments",
         parents=[
+            parent_detailed_exitcode,
             parent_list_preview_apply,
             parent_preview_apply,
             parent_apply_update_hash,
@@ -301,10 +309,30 @@ def _parse_cli_args() -> None:
             " module source code without needing to update deployments"
         ),
         parents=[
+            parent_detailed_exitcode,
             parent_list_preview_apply,
             parent_preview_apply,
             parent_apply_update_hash,
         ],
+    )
+
+    # Arguments that are specific to the command "remove-orphans"
+    remove_orphans = subparsers.add_parser(
+        "remove-orphans",
+        help=(
+            "Remove orphaned module deployments from the package state corresponding to"
+            " accounts that no longer exist in the AWS organization or regions that are"
+            " no longer enabled in an account"
+        ),
+        parents=[parent_detailed_exitcode],
+    )
+    remove_orphans.add_argument(
+        "--dry-run",
+        action="store_true",
+        help=(
+            "Return the list of orphaned module deployments to remove without making"
+            " any changes"
+        ),
     )
 
     # Parse the arguments and store them as a dict for use by other modules

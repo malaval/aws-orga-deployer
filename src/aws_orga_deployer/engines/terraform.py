@@ -107,7 +107,7 @@ class Engine(base.BaseEngine):
                 for service, url in module_config["EndpointUrls"].items():
                     if service == "s3":
                         stream.write(f'    endpoint = "{url}"\n')
-                        stream.write(f"    force_path_style = true\n")
+                        stream.write("    force_path_style = true\n")
 
                     elif service == "sts":
                         stream.write(f'    sts_endpoint = "{url}"\n')

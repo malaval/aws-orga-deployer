@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.5] 2024/02/08
+
+* Added a command `remove-orphans` to remove orphaned orphaned module deployments from the package state corresponding to AWS accounts that no longer exist in the AWS organization or regions that are no longer enabled in an account.
+
 ## [0.1.4] 2024/01/19
 
 * Fixed bug in package definition validation module preventing from using the `ConcurrentWorkers` attribute.

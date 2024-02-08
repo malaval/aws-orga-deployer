@@ -207,3 +207,15 @@ class TestOrgaParser(unittest.TestCase):
             self.orga.get_account_name("098765432109"),
             "undefined",
         )
+
+    def test_account_region_exists(self):
+        """Check that account_region_exists returns True given that the account
+        exists and the region is enabled in this account.
+        """
+        self.assertTrue(self.orga.account_region_exists("123456789012", "us-east-1"))
+
+    def test_account_region_not_exists(self):
+        """Check that account_region_exists returns False given that the account
+        exists and the region is not enabled in this account.
+        """
+        self.assertFalse(self.orga.account_region_exists("123456789012", "eu-west-3"))

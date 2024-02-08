@@ -639,6 +639,37 @@ class TestPackage(unittest.TestCase):
         export = package3.export_changes()
         self.assertNotIn("PendingChanges", export.keys())
 
+    def test_remove_orphans(self):
+        """Test that remove_orphans removes module deployments for accounts
+        that no longer exist in the organization.
+        """
+        package1 = Package()
+        package1.full_init(self.orga)
+        # Add a fake deployment to the current state
+        fake_key = store.ModuleAccountRegionKey(
+            "terraform1", "098765432109", "us-east-1"
+        )
+        package1.current[fake_key] = store.CurrentDeploymentDetails(
+            variables={},
+            var_from_outputs={},
+            dependencies=[],
+            module_hash="fake_hash",
+            outputs={},
+            last_changed_time="",
+        )
+        package1.save()
+        # Reload the package and remove orphans
+        package2 = Package()
+        package2.full_init(self.orga)
+        orphans_removed = package2.remove_orphans()
+        self.assertIn(fake_key.to_dict(), orphans_removed)
+        # Reload the package and check that there are no module deployments
+        # to destroy
+        package3 = Package()
+        package3.full_init(self.orga)
+        export = package3.export_changes()
+        self.assertNotIn("PendingButSkippedChanges", export.keys())
+
 
 class TestInvalidPackage(unittest.TestCase):
     """Test the class Package with invalid package definition files."""
