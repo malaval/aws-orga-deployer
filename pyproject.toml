@@ -11,8 +11,22 @@ include = "\\.py$"
 max-line-length = 88
 disable = [
     "useless-option-value",
-    "bad-continuation"
+    "bad-continuation",
+    "too-many-instance-attributes",
+    "too-many-locals",
+    "too-many-nested-blocks",
+    "too-many-public-methods",
+    "too-few-public-methods",
+    "too-many-positional-arguments",
+    "too-many-arguments",
+    "too-many-branches",
+    "duplicate-code",
+    "too-many-statements",
+    "line-too-long"
 ]
 
 [tool.isort]
 profile = "black"
+
+[tool.mypy]
+ignore_missing_imports = true

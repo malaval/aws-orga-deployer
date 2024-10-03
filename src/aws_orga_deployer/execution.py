@@ -228,6 +228,7 @@ class Executor:
                     LOGGER.debug("%s Cwd: %s", key, command.cwd)
                     try:
                         # pylint: disable=subprocess-popen-preexec-fn
+                        # pylint: disable=consider-using-with
                         # Need to catch SIGINT signals to exit gracefully
                         process = subprocess.Popen(
                             command.args,

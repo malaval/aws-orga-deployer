@@ -72,6 +72,13 @@ class Engine(base.BaseEngine):
             var_filename = path.join(deployment_cache_dir, "terraform.tfvars.json")
             with open(var_filename, "w", encoding="utf-8") as stream:
                 json.dump(variables, stream, indent=4)
+        if action in ("destroy"):
+            # If the module directory contains a file `override.tf`, copy it
+            # to the deployment cache directory so that custom provider
+            # configuration is preserved for destroy operation
+            override_filename = path.join(self.module_dir, "override.tf")
+            if path.exists(override_filename):
+                shutil.copy(override_filename, deployment_cache_dir)
         # Create a file `aws_orga_deployer.tf` that contains the configuration
         # of the AWS provider and of the S3 backend
         tf_filename = path.join(deployment_cache_dir, "aws_orga_deployer.tf")

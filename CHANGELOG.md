@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.6] 2024/10/03
+
+* Fixed issue with Terraform engines: Custom provider configuration in `override.tf` such as specific provider version are now taken in consideration during destroy operations. Before that, the latest provider version was used which might have led to inconsistencies.
+
 ## [0.1.5] 2024/02/08
 
 * Added a command `remove-orphans` to remove orphaned orphaned module deployments from the package state corresponding to AWS accounts that no longer exist in the AWS organization or regions that are no longer enabled in an account.
