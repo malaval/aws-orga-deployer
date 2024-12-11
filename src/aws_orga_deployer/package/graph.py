@@ -130,7 +130,13 @@ class DeploymentGraph:
         """
         for ascendant in self._graph.predecessors(key):
             details = self._graph.nodes[ascendant]["details"]
-            if details.action != "none" and details.skip is False:
+            if details.skip is False and (
+                details.action in ("create", "destroy")
+                or (
+                    details.action in ("update", "conditional-update")
+                    and details.made_changes is True
+                )
+            ):
                 return True
         return False
 
