@@ -202,7 +202,11 @@ class OrgaParser:
         pages = paginator.paginate()
         for page in pages:
             for account in page["Accounts"]:
-                if account["Status"] == "ACTIVE":
+                # Attribute "Status" is getting deprecated in 2025-26
+                if (
+                    account.get("Status") == "ACTIVE"
+                    or account.get("State") == "ACTIVE"
+                ):
                     accounts[account["Id"]] = {"Name": account["Name"]}
 
         # Recursively browse the organization to find the parent OUs for each

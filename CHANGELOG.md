@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.8] 2025/11/18
+
+* Updated how the account status is retrieved, given that the attribute `Status` is being deprecated by AWS.
+
 ## [0.1.7] 2024/12/11
 
 * Fixed an issue that occured when running the command `preview`. When a module deployment B has a dependency on module deployment A, and if no changes to be made were found for the module deployment A, the preview of module deployment B used to fail with the following error message: `Unable to preview changes as this deployment is dependent on other deployments with pending changes`. Now, it does not fail anymore.
